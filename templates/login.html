@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Login/Signup - ViroScan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <!-- Additional CSS for Login/Signup Page -->
+  <style>
+    /* Auth Container */
+    .auth-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(0, 179, 255, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .auth-container:hover {
+      box-shadow: 0 0 20px rgba(0, 179, 255, 0.3);
+    }
+    
+    .auth-header {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-bottom: 1px solid rgba(0, 179, 255, 0.2);
+      position: relative;
+    }
+    
+    .auth-header-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      animation: auth-glow 3s infinite;
+    }
+    
+    @keyframes auth-glow {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(0, 179, 255, 0.2);
+    }
+    
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      cursor: pointer;
+      color: var(--light);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .auth-tab.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .auth-tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--primary);
+    }
+    
+    .auth-tab:hover {
+      background-color: rgba(0, 179, 255, 0.1);
+    }
+    
+    .auth-content {
+      padding: 30px;
+    }
+    
+    .auth-form {
+      display: none;
+    }
+    
+    .auth-form.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--primary);
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(0, 179, 255, 0.2);
+      border-radius: 4px;
+      color: var(--light);
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0, 179, 255, 0.2);
+      outline: none;
+    }
+    
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .form-text {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 5px;
+    }
+    
+    .form-check {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .form-check-input {
+      margin-right: 10px;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid rgba(0, 179, 255, 0.3);
+      border-radius: 3px;
+      background-color: rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .form-check-input:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .form-check-input:checked::after {
+      content: "✓";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--light);
+      font-size: 12px;
+    }
+    
+    .form-check-label {
+      color: var(--light);
+      cursor: pointer;
+    }
+    
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .auth-divider span {
+      padding: 0 15px;
+    }
+    
+    .social-login {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      font-size: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .social-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .social-btn.google:hover {
+      color: #DB4437;
+      border-color: #DB4437;
+    }
+    
+    .social-btn.facebook:hover {
+      color: #4267B2;
+      border-color: #4267B2;
+    }
+    
+    .social-btn.twitter:hover {
+      color: #1DA1F2;
+      border-color: #1DA1F2;
+    }
+    
+    .auth-footer {
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+    
+    .auth-link {
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .auth-link:hover {
+      text-decoration: underline;
+      color: var(--accent);
+    }
+    
+    /* Password strength indicator */
+    .password-strength {
+      height: 5px;
+      margin-top: 10px;
+      border-radius: 2px;
+      background-color: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+    
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .strength-weak {
+      width: 25%;
+      background-color: #ff4d4d;
+    }
+    
+    .strength-medium {
+      width: 50%;
+      background-color: #ffaa00;
+    }
+    
+    .strength-good {
+      width: 75%;
+      background-color: #2ecc71;
+    }
+    
+    .strength-strong {
+      width: 100%;
+      background-color: #00ff9d;
+    }
+    
+    /* Cyber button small */
+    .btn-cyber-sm {
+      background-color: transparent;
+      color: var(--light);
+      border: 1px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: all 0.3s ease;
+      padding: 5px 12px;
+      font-size: 0.85rem;
+    }
+    
+    .btn-cyber-sm::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+      z-index: -1;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    
+    .btn-cyber-sm:hover {
+      color: var(--light);
+      border-color: var(--primary);
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    
+    .btn-cyber-sm:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .btn-cyber-outline-sm {
+      background-color: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: all 0.3s ease;
+      padding: 5px 12px;
+      font-size: 0.85rem;
+    }
+    
+    .btn-cyber-outline-sm:hover {
+      color: var(--light);
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    
+    .btn-cyber-outline-sm::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+      z-index: -1;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    
+    .btn-cyber-outline-sm:hover::before {
+      transform: scaleX(1);
+    }
+    
+    /* Binary code animation in background */
+    .binary-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      opacity: 0.05;
+    }
+    
+    .binary-code {
+      position: absolute;
+      color: var(--primary);
+      font-family: monospace;
+      font-size: 12px;
+      white-space: nowrap;
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body class="cyber-theme">
+  <!-- Cyber Background Elements -->
+  <div class="cyber-grid"></div>
+  <div class="cyber-particles"></div>
+  <div class="cyber-binary-rain"></div>
+
+  <!-- Header -->
+  <header class="header_section">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg custom_nav-container">
+        <a class="navbar-brand" href="/">
+          <div class="logo-container">
+            <img src="/static/images/logo.png" alt="ViroScan Logo" class="logo" />
+            <div class="logo-glow"></div>
+          </div>
+          <span class="cyber-text">Viro<span class="text-accent">Scan</span></span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="heading_container text-center mb-5">
+      <h2 class="cyber-heading">Secure <span class="text-accent">Access</span></h2>
+      <div class="cyber-line"></div>
+      <p class="lead">Login or create an account to access advanced security features</p>
+    </div>
+
+    <div class="auth-container">
+      <div class="auth-header">
+        <div class="auth-header-glow"></div>
+        <div class="auth-tabs">
+          <div class="auth-tab login-tab active" data-tab="login">
+            <i class="fas fa-sign-in-alt mr-2"></i> Login
+          </div>
+          <div class="auth-tab signup-tab" data-tab="signup">
+            <i class="fas fa-user-plus mr-2"></i> Sign Up
+          </div>
+        </div>
+      </div>
+
+  <div class="auth-content">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container mt-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category in ['danger', 'signup_error'] else category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    <!-- Login Form -->
+    <form class="auth-form login-form active" action="{{ url_for('login_post') }}" method="POST">
+      <div class="form-group">
+        <label for="login-email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="login-email" name="email" placeholder="Enter your email" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="login-password" class="form-label">Password</label>
+        <div class="input-group">
+          <input type="password" class="form-control" id="login-password" name="password" placeholder="Enter your password" required>
+          <div class="input-group-append">
+            <button class="btn btn-cyber-sm toggle-password" type="button" data-target="login-password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="remember-me" name="remember">
+        <label class="form-check-label" for="remember-me">Remember me</label>
+      </div>
+      
+      <button type="submit" class="btn btn-cyber w-100">
+        <span><i class="fas fa-lock"></i> Secure Login</span>
+        <div class="btn-cyber-glow"></div>
+      </button>
+      
+      <div class="text-right mt-3">
+        <a href="{{ url_for('forgot_password') }}" class="auth-link">Forgot password?</a>
+      </div>
+      
+      <div class="auth-divider">
+        <span>or continue with</span>
+      </div>
+      
+      <div class="social-login">
+        <a href="{{ url_for('google_login') }}" class="social-btn google">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="{{ url_for('facebook_login') }}" class="social-btn facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="{{ url_for('twitter_login') }}" class="social-btn twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </div>
+    </form>
+
+        <!-- Signup Form -->
+        <form class="auth-form signup-form" action="{{ url_for('signup_post') }}" method="POST" id="signup-form">
+          <div class="form-group">
+            <label for="signup-name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="signup-name" name="username" placeholder="Enter your full name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="signup-email" name="email" placeholder="Enter your email" required>
+            <small id="email-feedback" class="form-text">We'll never share your email with anyone else.</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-password" class="form-label">Password</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="signup-password" name="password" placeholder="Create a strong password" required>
+              <div class="input-group-append">
+                <button class="btn btn-cyber-sm toggle-password" type="button" data-target="signup-password">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="password-strength">
+              <div class="password-strength-bar"></div>
+            </div>
+            <small class="form-text password-feedback">Password must be at least 8 characters</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="signup-confirm" class="form-label">Confirm Password</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="signup-confirm" name="confirm_password" placeholder="Confirm your password" required>
+              <div class="input-group-append">
+                <button class="btn btn-cyber-sm toggle-password" type="button" data-target="signup-confirm">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+            <label class="form-check-label" for="terms">
+              I agree to the <a href="{{ url_for('terms') }}" class="auth-link">Terms of Service</a> and <a href="{{ url_for('privacy') }}" class="auth-link">Privacy Policy</a>
+            </label>
+          </div>
+          
+          <button type="submit" class="btn btn-cyber w-100 mt-4">
+            <span><i class="fas fa-user-shield"></i> Create Secure Account</span>
+            <div class="btn-cyber-glow"></div>
+          </button>
+        </form>
+      </div>
+
+      <div class="auth-footer">
+        <p>Protected by ViroScan Security <i class="fas fa-shield-alt text-accent"></i></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Binary code background animation -->
+  <div class="binary-background" id="binary-background"></div>
+
+  <!-- Footer -->
+  <footer class="footer-section mt-5">
+    <div class="cyber-grid-footer"></div>
+    <div class="container">
+      <div class="footer-bottom text-center">
+        <p>&copy; 2025 ViroScan. All Rights Reserved.</p>
+        <div class="footer-legal">
+          <a href="#" class="cyber-link-sm">Terms of Service</a>
+          <a href="#" class="cyber-link-sm">Privacy Policy</a>
+          <a href="#" class="cyber-link-sm">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    // Initialize AOS animations
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+
+    // Create binary rain effect
+    function createBinaryRain() {
+      const binaryRain = document.querySelector('.cyber-binary-rain');
+      const width = binaryRain.offsetWidth;
+      const height = binaryRain.offsetHeight;
+      
+      for (let i = 0; i < 50; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'binary-drop';
+        drop.style.left = `${Math.random() * width}px`;
+        drop.style.animationDuration = `${Math.random() * 2 + 1}s`;
+        drop.style.animationDelay = `${Math.random() * 2}s`;
+        
+        // Random binary content
+        drop.textContent = Math.random() > 0.5 ? '1' : '0';
+        
+        binaryRain.appendChild(drop);
+      }
+    }
+
+    // Create particles effect
+    function createParticles() {
+      const particles = document.querySelector('.cyber-particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random position
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 5 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random animation duration
+        particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+        
+        particles.appendChild(particle);
+      }
+    }
+
+    // Create grid effect
+    function createGrid() {
+      const grid = document.querySelector('.cyber-grid');
+      const gridSize = 20;
+      
+      for (let i = 0; i < gridSize; i++) {
+        const horizontalLine = document.createElement('div');
+        horizontalLine.className = 'grid-line horizontal';
+        horizontalLine.style.top = `${(i / gridSize) * 100}%`;
+        
+        const verticalLine = document.createElement('div');
+        verticalLine.className = 'grid-line vertical';
+        verticalLine.style.left = `${(i / gridSize) * 100}%`;
+        
+        grid.appendChild(horizontalLine);
+        grid.appendChild(verticalLine);
+      }
+    }
+
+    // Create binary code background
+    function createBinaryBackground() {
+      const container = document.getElementById('binary-background');
+      const containerWidth = container.offsetWidth;
+      const containerHeight = container.offsetHeight;
+      
+      for (let i = 0; i < 50; i++) {
+        const code = document.createElement('div');
+        code.className = 'binary-code';
+        
+        // Random position
+        code.style.top = `${Math.random() * containerHeight}px`;
+        code.style.left = `${Math.random() * containerWidth}px`;
+        
+        // Generate random binary string
+        let binaryString = '';
+        for (let j = 0; j < 100; j++) {
+          binaryString += Math.random() > 0.5 ? '1' : '0';
+        }
+        code.textContent = binaryString;
+        
+        container.appendChild(code);
+      }
+    }
+
+    // Tab switching functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.auth-tab');
+      const forms = document.querySelectorAll('.auth-form');
+      
+      // Check URL parameters to see if we should show signup by default
+      const urlParams = new URLSearchParams(window.location.search);
+      const action = urlParams.get('action');
+      
+      if (action === 'signup') {
+        document.querySelector('.login-tab').classList.remove('active');
+        document.querySelector('.signup-tab').classList.add('active');
+        document.querySelector('.login-form').classList.remove('active');
+        document.querySelector('.signup-form').classList.add('active');
+      }
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+          
+          // Remove active class from all tabs and forms
+          tabs.forEach(t => t.classList.remove('active'));
+          forms.forEach(f => f.classList.remove('active'));
+          
+          // Add active class to clicked tab and corresponding form
+          this.classList.add('active');
+          document.querySelector(`.${tabName}-form`).classList.add('active');
+        });
+      });
+      
+      // Toggle password visibility
+      const toggleButtons = document.querySelectorAll('.toggle-password');
+      toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetId = this.getAttribute('data-target');
+          const passwordInput = document.getElementById(targetId);
+          
+          if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+          } else {
+            passwordInput.type = 'password';
+            this.innerHTML = '<i class="fas fa-eye"></i>';
+          }
+        });
+      });
+      
+      // Password strength meter
+      const passwordInput = document.getElementById('signup-password');
+      const strengthBar = document.querySelector('.password-strength-bar');
+      const strengthFeedback = document.querySelector('.password-feedback');
+      
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        let strength = 0;
+        
+        // Length check
+        if (password.length >= 8) {
+          strength += 1;
+        }
+        
+        // Contains uppercase
+        if (/[A-Z]/.test(password)) {
+          strength += 1;
+        }
+        
+        // Contains number
+        if (/[0-9]/.test(password)) {
+          strength += 1;
+        }
+        
+        // Contains special character
+        if (/[^A-Za-z0-9]/.test(password)) {
+          strength += 1;
+        }
+        
+        // Update strength bar
+        strengthBar.className = 'password-strength-bar';
+        
+        if (password.length === 0) {
+          strengthBar.style.width = '0';
+          strengthFeedback.textContent = 'Password must be at least 8 characters';
+        } else if (strength === 1) {
+          strengthBar.classList.add('strength-weak');
+          strengthFeedback.textContent = 'Weak password';
+        } else if (strength === 2) {
+          strengthBar.classList.add('strength-medium');
+          strengthFeedback.textContent = 'Medium strength password';
+        } else if (strength === 3) {
+          strengthBar.classList.add('strength-good');
+          strengthFeedback.textContent = 'Good password';
+        } else {
+          strengthBar.classList.add('strength-strong');
+          strengthFeedback.textContent = 'Strong password';
+        }
+      });
+      
+      // Confirm password validation
+      const confirmInput = document.getElementById('signup-confirm');
+      
+      confirmInput.addEventListener('input', function() {
+        if (this.value !== passwordInput.value) {
+          this.setCustomValidity('Passwords do not match');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+      
+      // Initialize cyber effects
+      createBinaryRain();
+      createParticles();
+      createGrid();
+      createBinaryBackground();
+    });
+  </script>
+
+  <script>
+    // Show popup alert if flash message for duplicate email exists
+    document.addEventListener('DOMContentLoaded', function() {
+      const flashMessagesJson = '{{ get_flashed_messages(with_categories=true) | tojson | safe }}';
+      const flashMessages = JSON.parse(flashMessagesJson);
+      console.log("Flash messages:", flashMessages);
+      flashMessages.forEach(function(message) {
+        const category = message[0];
+        const text = message[1];
+        console.log("Flash message category:", category, "text:", text);
+        if (category === 'signup_error' && text.includes('Email already exists')) {
+          alert('USER IS ALREADY EXIST');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

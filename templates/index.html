@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>ViroScan - Advanced Cybersecurity Scanner</title>
+
+  <!-- CSS Links -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+
+<body class="cyber-theme">
+  <!-- Cyber Background Elements -->
+  <div class="cyber-grid"></div>
+  <div class="cyber-particles"></div>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container">
+        {% for category, message in messages %}
+          {% if category != 'url_scan' and category != 'file_scan' %}
+          <div class="alert alert-{{ category }} flash-message text-center mt-3 alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Header -->
+  <!-- Header -->
+<header class="header_section">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg custom_nav-container">
+      <a class="navbar-brand" href="/">
+        <div class="logo-container">
+          <img src="/static/images/logo.png" alt="ViroScan Logo" class="logo" />
+          <div class="logo-glow"></div>
+        </div>
+        <span class="cyber-text">Viro<span class="text-accent">Scan</span></span>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#scan-section">Scan</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#scan-history">History</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard') }}">Profile</a>
+          </li> -->
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">
+              <button class="btn btn-cyber-sm">
+                <span><i class="fas fa-sign-in-alt"></i> Login</span>
+                <div class="btn-cyber-glow"></div>
+              </button>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}?action=signup">
+              <button class="btn btn-cyber-outline-sm">
+                <span><i class="fas fa-user-plus"></i> Logout</span>
+                <div class="btn-cyber-glow"></div>
+              </button>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+
+    <!-- Hero -->
+    <section class="slider_section position-relative">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <div class="detail-box animate__animated animate__fadeInLeft">
+              <h2 class="cyber-glitch" data-text="Advanced Protection">Advanced Protection</h2>
+              <h1 class="cyber-heading">ViroScan <span class="text-accent">Security</span></h1>
+              <div class="cyber-line"></div>
+              <p class="my-4">Protect your digital assets with our state-of-the-art scanning technology. Detect malware, phishing, and other cyber threats before they compromise your security.</p>
+              <!--<a class="btn btn-cyber" href="#scan-section">
+                <span> </span>
+                <i class="fas fa-arrow-right ml-2"></i>
+                <div class="btn-cyber-glow"></div>
+              </a> -->
+            </div>
+          </div>
+          <div class="col-lg-6 d-none d-lg-block">
+            <div class="hero-image animate__animated animate__fadeInRight">
+              <div class="cyber-shield">
+                <div class="shield-outer"></div>
+                <div class="shield-inner"></div>
+                <div class="shield-icon">
+                  <i class="fas fa-shield-alt"></i>
+                </div>
+              </div>
+              <div class="cyber-code-container">
+                <div class="cyber-code"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cyber-scanner"></div>
+      <div class="wave-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#121212" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,149.3C960,160,1056,160,1152,138.7C1248,117,1344,75,1392,53.3L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
+      </div>
+    </section>
+  </div>
+
+  <!-- Features Section -->
+  <section class="features-section py-5">
+    <div class="container">
+      <div class="heading_container text-center mb-5">
+        <h2 class="cyber-heading">Why Choose <span class="text-accent">ViroScan</span></h2>
+        <div class="cyber-line"></div>
+        <p class="lead">Comprehensive protection against modern cyber threats</p>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="feature-card text-center p-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="icon-container mb-3">
+              <i class="fas fa-shield-alt"></i>
+              <div class="icon-pulse"></div>
+            </div>
+            <h4>Real-Time Protection</h4>
+            <p>Instant scanning and detection of malicious content before it reaches your system.</p>
+            <div class="cyber-card-border"></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card text-center p-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="icon-container mb-3">
+              <i class="fas fa-database"></i>
+              <div class="icon-pulse"></div>
+            </div>
+            <h4>Extensive Database</h4>
+            <p>Our threat intelligence database is updated hourly with the latest malware signatures.</p>
+            <div class="cyber-card-border"></div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="feature-card text-center p-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="icon-container mb-3">
+              <i class="fas fa-lock"></i>
+              <div class="icon-pulse"></div>
+            </div>
+            <h4>Privacy Focused</h4>
+            <p>Your data stays private. We never store the content of your scanned files.</p>
+            <div class="cyber-card-border"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scan Section -->
+  <section id="scan-section" class="scan-section py-5">
+    <div class="container">
+      <div class="heading_container text-center mb-5">
+        <h2 class="cyber-heading">Security <span class="text-accent">Scanner</span></h2>
+        <div class="cyber-line"></div>
+        <p class="lead">Detect malware, ransomware, spyware, and phishing attempts</p>
+      </div>
+      <div class="row">
+        <!-- Scan URL -->
+        <div class="col-md-6 mb-4">
+          <div class="scan-card url-scan-card" data-aos="zoom-in" data-aos-delay="100">
+            <div class="card-header">
+              <h5><i class="fas fa-link"></i> URL Scanner</h5>
+              <p>Check if a website is safe to visit</p>
+              <div class="cyber-card-glow"></div>
+            </div>
+            <div class="card-body">
+              <form id="scanForm" method="post" action="/scan-url">
+                <div class="cyber-input-container">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                    <input type="text" name="url" id="url" class="form-control cyber-input" placeholder="Enter URL to scan..." required>
+                  </div>
+                  <div class="cyber-input-border"></div>
+                </div>
+                <button type="submit" class="btn btn-cyber w-100">
+                  <span><i class="fas fa-search"></i> Scan URL</span>
+                  <div class="btn-cyber-glow"></div>
+                </button>
+                <div id="loadingSpinner" class="text-center mt-3" style="display:none;">
+                  <div class="cyber-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-dot"></div>
+                  </div>
+                  <p>Scanning... Please wait</p>
+                </div>
+                <!-- URL Scan Result Messages -->
+                <div id="urlScanResult" class="mt-3">
+                  {% with messages = get_flashed_messages(category_filter=["url_scan"]) %}
+                    {% if messages %}
+                      {% for message in messages %}
+                        <div class="alert cyber-alert alert-{{ 'success' if 'success' in message else 'danger' }} alert-dismissible fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload File -->
+        <div class="col-md-6 mb-4">
+          <div class="scan-card file-scan-card" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card-header">
+              <h5><i class="fas fa-file-alt"></i> File Scanner</h5>
+              <p>Check files for malicious content</p>
+              <div class="cyber-card-glow"></div>
+            </div>
+            <div class="card-body">
+              <form id="fileUploadForm" action="/scan_file" method="post" enctype="multipart/form-data">
+                <div class="file-upload-container mb-3">
+                  <label for="fileUpload" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Choose a file or drag it here</span>
+                    <div class="upload-glow"></div>
+                  </label>
+                  <input type="file" name="file" id="fileUpload" class="file-upload-input" required />
+                </div>
+                <div id="fileNameDisplay" class="selected-file mb-3"></div>
+                <button type="submit" class="btn btn-cyber w-100">
+                  <span><i class="fas fa-virus-slash"></i> Upload & Scan File</span>
+                  <div class="btn-cyber-glow"></div>
+                </button>
+                <div id="fileLoadingSpinner" class="text-center mt-3" style="display: none;">
+                  <div class="cyber-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-dot"></div>
+                  </div>
+                  <p>Scanning... Please wait</p>
+                </div>
+                <!-- File Scan Result Messages -->
+                <div id="fileScanResult" class="mt-3">
+                  {% with messages = get_flashed_messages(category_filter=["file_scan"]) %}
+                    {% if messages %}
+                      {% for message in messages %}
+                        <div class="alert cyber-alert alert-{{ 'success' if 'success' in message else 'danger' }} alert-dismissible fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cyber-binary-rain"></div>
+  </section>  
+  
+  <!-- Scan History -->
+<section id="scan-history" class="history-section py-5">
+  <div class="container">
+    <div class="heading_container text-center mb-5">
+      <h2 class="cyber-heading">Scan <span class="text-accent">History</span></h2>
+      <div class="cyber-line"></div>
+      <p class="lead">View your recent security scans</p>
+    </div>
+    <div class="table-responsive">
+      <table class="table custom-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Target</th>
+            <th>Status</th>
+            <th>Result</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in scan_history %}
+          <tr class="cyber-table-row">
+            <td><span class="badge bg-secondary">#{{ record.record[0] }}</span></td>
+            <td>{{ record.record[1] }}</td>
+            <td>
+              {% if record.record[2] == 'URL' %}
+              <span class="badge bg-primary"><i class="fas fa-link"></i> URL</span>
+              {% else %}
+              <span class="badge bg-info"><i class="fas fa-file"></i> File</span>
+              {% endif %}
+            </td>
+            <td class="text-truncate" style="max-width: 200px;">{{ record.record[3] }}</td>
+            <td>
+              {% if record.record[4] == 'Completed' %}
+              <span class="badge bg-success">Completed</span>
+              {% else %}
+              <span class="badge bg-warning">{{ record.record[4] }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if "Error during scan" in record.record[5] %}
+              <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error</span>
+              {% elif record.malicious > 0 %}
+              <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Malicious</span>
+              {% else %}
+              <span class="text-success"><i class="fas fa-check-circle"></i> Clean</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('scan_report', scan_id=record.record[0]) }}" class="btn btn-cyber-sm">
+                <span><i class="fas fa-file-alt"></i> Report</span>
+                <div class="btn-cyber-glow"></div>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="text-center mt-4">
+      <a href="{{ url_for('full_history') }}" class="btn btn-cyber-outline">
+        <span><i class="fas fa-history"></i> View Full History</span>
+        <div class="btn-cyber-glow"></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="pricing-section py-5">
+    <div class="container">
+      <div class="heading_container text-center mb-5">
+        <h2 class="cyber-heading">Pricing <span class="text-accent">Plans</span></h2>
+        <div class="cyber-line"></div>
+        <p class="lead">Choose the plan that fits your security needs</p>
+      </div>
+      <div class="row">
+        <!-- Free -->
+        <div class="col-md-4 mb-4">
+          <div class="pricing-card" data-aos="flip-left" data-aos-delay="100">
+            <div class="pricing-header">
+              <h4>Free</h4>
+              <div class="price">$0<span>/month</span></div>
+            </div>
+            <div class="pricing-body">
+              <ul class="feature-list">
+                <li><i class="fas fa-check"></i> URL Scanning</li>
+                <li><i class="fas fa-check"></i> Limited File Uploads (10MB)</li>
+                <li><i class="fas fa-check"></i> Basic Scan Reports</li>
+                <li><i class="fas fa-times"></i> Full Scan History</li>
+                <li><i class="fas fa-times"></i> API Access</li>
+              </ul>
+              <a href="#" class="btn btn-cyber-outline btn-block">
+                <span>Get Started</span>
+                <div class="btn-cyber-glow"></div>
+              </a>
+            </div>
+            <div class="cyber-card-border"></div>
+          </div>
+        </div>
+        <!-- Pro -->
+        <div class="col-md-4 mb-4">
+          <div class="pricing-card featured" data-aos="flip-left" data-aos-delay="200">
+            <div class="popular-badge">Most Popular</div>
+            <div class="pricing-header">
+              <h4>Pro</h4>
+              <div class="price">$9.99<span>/month</span></div>
+            </div>
+            <div class="pricing-body">
+              <ul class="feature-list">
+                <li><i class="fas fa-check"></i> Unlimited URL Scanning</li>
+                <li><i class="fas fa-check"></i> File Uploads up to 100MB</li>
+                <li><i class="fas fa-check"></i> Detailed Threat Analysis</li>
+                <li><i class="fas fa-check"></i> Full Scan History</li>
+                <li><i class="fas fa-check"></i> Real-Time Alerts</li>
+                <li><i class="fas fa-times"></i> API Access</li>
+              </ul>
+              <a href="#" class="btn btn-cyber btn-block">
+                <span>Subscribe Now</span>
+                <div class="btn-cyber-glow"></div>
+              </a>
+            </div>
+            <div class="cyber-card-border featured-border"></div>
+          </div>
+        </div>
+        <!-- Enterprise -->
+        <div class="col-md-4 mb-4">
+          <div class="pricing-card" data-aos="flip-left" data-aos-delay="300">
+            <div class="pricing-header">
+              <h4>Enterprise</h4>
+              <div class="price">Custom<span>/pricing</span></div>
+            </div>
+            <div class="pricing-body">
+              <ul class="feature-list">
+                <li><i class="fas fa-check"></i> All Pro Features</li>
+                <li><i class="fas fa-check"></i> Unlimited File Size</li>
+                <li><i class="fas fa-check"></i> API & Dashboard Access</li>
+                <li><i class="fas fa-check"></i> Priority Support</li>
+                <li><i class="fas fa-check"></i> Custom Integration</li>
+                <li><i class="fas fa-check"></i> Dedicated Account Manager</li>
+              </ul>
+              <a href="#" class="btn btn-cyber-outline btn-block">
+                <span>Contact Sales</span>
+                <div class="btn-cyber-glow"></div>
+              </a>
+            </div>
+            <div class="cyber-card-border"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cyber-grid-overlay"></div>
+  </section>
+
+  <!-- Report Suspicious Activity -->
+  <section id="contact" class="contact-section py-5">
+    <div class="container">
+      <div class="heading_container text-center mb-5">
+        <h2 class="cyber-heading">Report <span class="text-accent">Threats</span></h2>
+        <div class="cyber-line"></div>
+        <p class="lead">Help us improve our threat detection by reporting suspicious content</p>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="contact-form-container" data-aos="fade-up">
+            <form method="POST" action="/report" class="contact-form">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="cyber-input-container">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control cyber-input" required />
+                    <div class="cyber-input-border"></div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="cyber-input-container">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control cyber-input" required />
+                    <div class="cyber-input-border"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="cyber-input-container">
+                  <label for="target" class="form-label">URL or File Name</label>
+                  <input type="text" id="target" name="target" class="form-control cyber-input" required />
+                  <div class="cyber-input-border"></div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="cyber-input-container">
+                  <label for="message" class="form-label">Describe the Issue</label>
+                  <textarea id="message" name="message" class="form-control cyber-input" rows="4" required></textarea>
+                  <div class="cyber-input-border"></div>
+                </div>
+              </div>
+              <div class="text-center mt-4">
+                <button type="submit" class="btn btn-cyber">
+                  <span><i class="fas fa-paper-plane"></i> Submit Report</span>
+                  <div class="btn-cyber-glow"></div>
+                </button>
+              </div>
+            </form>
+            <!-- Report Success Message -->
+            <div id="reportResult" class="mt-3">
+              {% with messages = get_flashed_messages(category_filter=["report"]) %}
+                {% if messages %}
+                  {% for message in messages %}
+                    <div class="alert cyber-alert alert-success alert-dismissible fade show text-center" role="alert">
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cyber-circuit-overlay"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-section">
+    <div class="cyber-grid-footer"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5 class="cyber-footer-heading">About ViroScan</h5>
+          <div class="cyber-line-sm"></div>
+          <p>ViroScan provides advanced cybersecurity scanning tools to protect individuals and businesses from online threats.</p>
+          <div class="social-icons">
+            <a href="#" class="cyber-social"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="cyber-social"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="cyber-social"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="cyber-social"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5 class="cyber-footer-heading">Quick Links</h5>
+          <div class="cyber-line-sm"></div>
+          <ul class="footer-links">
+            <li><a href="#" class="cyber-link"><i class="fas fa-angle-right"></i> Home</a></li>
+            <li><a href="#scan-section" class="cyber-link"><i class="fas fa-angle-right"></i> Scan</a></li>
+            <li><a href="#scan-history" class="cyber-link"><i class="fas fa-angle-right"></i> History</a></li>
+            <li><a href="#pricing" class="cyber-link"><i class="fas fa-angle-right"></i> Pricing</a></li>
+            <li><a href="#contact" class="cyber-link"><i class="fas fa-angle-right"></i> Report</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5 class="cyber-footer-heading">Contact Us</h5>
+          <div class="cyber-line-sm"></div>
+          <ul class="contact-info">
+            <li><i class="fas fa-envelope text-accent"></i>ViroScan123@gmail.com</li>
+            <li><i class="fas fa-phone text-accent"></i> +91 8308631405</li>
+            <li><i class="fas fa-map-marker-alt text-accent"></i> 243 Main Street, Springfield, IL 62704, United States</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="cyber-hr">
+      <div class="footer-bottom text-center">
+        <p>&copy; 2025 ViroScan. All Rights Reserved.</p>
+        <div class="footer-legal">
+          <a href="#" class="cyber-link-sm">Terms of Service</a>
+          <a href="#" class="cyber-link-sm">Privacy Policy</a>
+          <a href="#" class="cyber-link-sm">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    // Initialize AOS animations
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+
+    // Handle URL scan form submission
+    document.getElementById('scanForm').addEventListener('submit', function (e) {
+      // Hide any previous alerts
+      document.querySelectorAll('#urlScanResult .alert').forEach(alert => alert.remove());
+      // Show loading spinner
+      document.getElementById('loadingSpinner').style.display = 'block';
+    });
+
+    // Handle file upload form submission
+    document.getElementById('fileUploadForm').addEventListener('submit', function (e) {
+      // Hide any previous alerts
+      document.querySelectorAll('#fileScanResult .alert').forEach(alert => alert.remove());
+      // Show loading spinner
+      document.getElementById('fileLoadingSpinner').style.display = 'block';
+    });
+
+    // Display selected filename
+    document.getElementById('fileUpload').addEventListener('change', function (e) {
+      const fileName = e.target.files[0]?.name || 'No file selected';
+      document.getElementById('fileNameDisplay').textContent = fileName;
+      document.getElementById('fileNameDisplay').style.display = 'block';
+    });
+
+    // Drag and drop functionality for file upload
+    const dropArea = document.querySelector('.file-upload-label');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      dropArea.classList.add('highlight');
+    }
+    
+    function unhighlight() {
+      dropArea.classList.remove('highlight');
+    }
+    
+    dropArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      document.getElementById('fileUpload').files = files;
+      
+      // Trigger change event to update filename display
+      const event = new Event('change');
+      document.getElementById('fileUpload').dispatchEvent(event);
+    }
+
+    // Create binary rain effect
+    function createBinaryRain() {
+      const binaryRain = document.querySelector('.cyber-binary-rain');
+      const width = binaryRain.offsetWidth;
+      const height = binaryRain.offsetHeight;
+      
+      for (let i = 0; i < 50; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'binary-drop';
+        drop.style.left = `${Math.random() * width}px`;
+        drop.style.animationDuration = `${Math.random() * 2 + 1}s`;
+        drop.style.animationDelay = `${Math.random() * 2}s`;
+        
+        // Random binary content
+        drop.textContent = Math.random() > 0.5 ? '1' : '0';
+        
+        binaryRain.appendChild(drop);
+      }
+    }
+
+    // Create particles effect
+    function createParticles() {
+      const particles = document.querySelector('.cyber-particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random position
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 5 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random animation duration
+        particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+        
+        particles.appendChild(particle);
+      }
+    }
+
+    // Create cyber code effect
+    function createCyberCode() {
+      const codeContainer = document.querySelector('.cyber-code');
+      const codeLines = 15;
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;':\",./<>?";
+      
+      for (let i = 0; i < codeLines; i++) {
+        const line = document.createElement('div');
+        line.className = 'code-line';
+        
+        // Generate random code
+        let codeText = '';
+        const lineLength = Math.floor(Math.random() * 20) + 10;
+        
+        for (let j = 0; j < lineLength; j++) {
+          codeText += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        
+        line.textContent = codeText;
+        line.style.animationDelay = `${i * 0.1}s`;
+        
+        codeContainer.appendChild(line);
+      }
+    }
+
+    // Create grid effect
+    function createGrid() {
+      const grid = document.querySelector('.cyber-grid');
+      const gridSize = 20;
+      
+      for (let i = 0; i < gridSize; i++) {
+        const horizontalLine = document.createElement('div');
+        horizontalLine.className = 'grid-line horizontal';
+        horizontalLine.style.top = `${(i / gridSize) * 100}%`;
+        
+        const verticalLine = document.createElement('div');
+        verticalLine.className = 'grid-line vertical';
+        verticalLine.style.left = `${(i / gridSize) * 100}%`;
+        
+        grid.appendChild(horizontalLine);
+        grid.appendChild(verticalLine);
+      }
+    }
+
+    // Initialize cyber effects
+    document.addEventListener('DOMContentLoaded', function() {
+      createBinaryRain();
+      createParticles();
+      createCyberCode();
+      createGrid();
+      
+      // Glitch effect for cyber-glitch elements
+      const glitchElements = document.querySelectorAll('.cyber-glitch');
+      
+      glitchElements.forEach(element => {
+        setInterval(() => {
+          element.classList.add('glitch-active');
+          setTimeout(() => {
+            element.classList.remove('glitch-active');
+          }, 200);
+        }, 3000);
+      });
+      
+      // Show general flash messages at the top
+      if (document.querySelector('.flash-message')) {
+        document.querySelector('.flash-message').style.display = 'block';
+        setTimeout(() => {
+          document.querySelector('.flash-message').style.display = 'none';
+        }, 5000);
+      }
+      
+      // Scroll to scan section if there are scan-specific messages
+      if (document.querySelector('#urlScanResult .alert') || document.querySelector('#fileScanResult .alert')) {
+        const scanSection = document.querySelector('#scan-section');
+        if (scanSection) {
+          scanSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+      
+      // Automatically fade out report alert after 5 seconds
+      setTimeout(function () {
+        const reportAlert = document.querySelector('#reportResult .alert');
+        if (reportAlert) {
+          reportAlert.classList.remove('show');
+          reportAlert.classList.add('fade');
+          setTimeout(() => {
+            reportAlert.remove();
+          }, 1000);
+        }
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

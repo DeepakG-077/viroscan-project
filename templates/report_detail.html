@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Scan Report #{{ scan.id }} - ViroScan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <!-- Additional CSS for Report Page -->
+  <style>
+    /* Small Cyber Button */
+    .btn-cyber-sm {
+      background-color: transparent;
+      color: var(--light);
+      border: 1px solid var(--primary);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: all 0.3s ease;
+      padding: 5px 12px;
+      font-size: 0.85rem;
+    }
+
+    .btn-cyber-sm::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+      z-index: -1;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-cyber-sm:hover {
+      color: var(--light);
+      border-color: var(--primary);
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-cyber-sm:hover::before {
+      transform: scaleX(1);
+    }
+
+    /* Scan Card */
+    .scan-card {
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(0, 179, 255, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .scan-card:hover {
+      box-shadow: 0 0 15px rgba(0, 179, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .scan-card .card-header {
+      background-color: rgba(0, 0, 0, 0.3);
+      color: var(--light);
+      padding: 15px;
+      border-bottom: 1px solid rgba(0, 179, 255, 0.2);
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .scan-card .card-header h5 {
+      margin: 0;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .scan-card .card-header h5 i {
+      margin-right: 10px;
+    }
+
+    .scan-card .card-body {
+      padding: 20px;
+    }
+
+    .cyber-card-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      animation: card-glow 3s infinite;
+    }
+
+    @keyframes card-glow {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Cyber Info Grid */
+    .cyber-info-grid {
+      display: grid;
+      grid-gap: 15px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 179, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .info-label {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: var(--light);
+    }
+
+    /* Cyber Shield Icon */
+    .cyber-shield-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto;
+      background: rgba(0, 255, 170, 0.1);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .cyber-shield-icon i {
+      font-size: 36px;
+      color: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    .cyber-error-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto;
+      background: rgba(255, 0, 60, 0.1);
+      border: 2px solid var(--secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .cyber-error-icon i {
+      font-size: 36px;
+      color: var(--secondary);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* Cyber Progress Bar */
+    .cyber-progress {
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    .cyber-progress .progress-bar {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cyber-progress .progress-bar::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: progress-shine 2s infinite;
+    }
+
+    @keyframes progress-shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* Cyber Subheading */
+    .cyber-subheading {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      position: relative;
+      display: inline-block;
+      padding-left: 15px;
+    }
+
+    .cyber-subheading::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    /* Cyber Metrics Grid */
+    .cyber-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 20px;
+    }
+
+    .metric-item {
+      display: flex;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .metric-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 179, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+
+    .metric-icon i {
+      color: var(--primary);
+      font-size: 18px;
+    }
+
+    .metric-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--light);
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Cyber Timeline */
+    .cyber-timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .cyber-timeline::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: rgba(0, 179, 255, 0.2);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -30px;
+      top: 5px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--darker);
+      border: 2px solid var(--primary);
+    }
+
+    .timeline-dot.completed {
+      background: var(--primary);
+    }
+
+    .timeline-time {
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-family: monospace;
+    }
+
+    .timeline-title {
+      font-weight: 500;
+      color: var(--light);
+    }
+
+    /* Cyber Code Block */
+    .cyber-code-block {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid var(--primary);
+      padding: 15px;
+      overflow-x: auto;
+    }
+
+    .cyber-code-block pre {
+      margin: 0;
+      color: var(--light);
+      font-family: monospace;
+    }
+
+    .cyber-code-block code {
+      color: var(--light);
+    }
+
+    /* Threat Details */
+    .threat-details {
+      padding: 10px;
+    }
+
+    .threat-severity h6, 
+    .threat-type h6, 
+    .recommended-action h6 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .cyber-metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-row {
+        grid-template-columns: 100px 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="cyber-theme">
+  <!-- Cyber Background Elements -->
+  <div class="cyber-grid"></div>
+  <div class="cyber-particles"></div>
+  <div class="cyber-binary-rain"></div>
+
+  <!-- Header -->
+  <header class="header_section">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg custom_nav-container">
+        <a class="navbar-brand" href="/">
+          <div class="logo-container">
+            <img src="/static/images/logo.png" alt="ViroScan Logo" class="logo" />
+            <div class="logo-glow"></div>
+          </div>
+          <span class="cyber-text">Viro<span class="text-accent">Scan</span></span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="heading_container text-center mb-5">
+      <h2 class="cyber-heading">Scan <span class="text-accent">Report</span></h2>
+      <div class="cyber-line"></div>
+      <p class="lead">Detailed analysis for scan #{{ scan.id }}</p>
+      <a href="{{ url_for('index') }}" class="btn btn-cyber mt-4">
+        <span><i class="fas fa-arrow-left mr-2"></i> Back to Scan History</span>
+        <div class="btn-cyber-glow"></div>
+      </a>
+    </div>
+
+    <div class="row">
+      <!-- Scan Overview Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="scan-card" data-aos="fade-up">
+          <div class="card-header">
+            <h5><i class="fas fa-info-circle"></i> Scan Overview</h5>
+            <div class="cyber-card-glow"></div>
+          </div>
+          <div class="card-body">
+            <div class="cyber-info-grid">
+              <div class="info-row">
+                <div class="info-label">Scan ID:</div>
+                <div class="info-value"><span class="badge bg-secondary">#{{ scan.id }}</span></div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">Date & Time:</div>
+                <div class="info-value">{{ scan.date }}</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">Scan Type:</div>
+                <div class="info-value">
+                  {% if scan.type == 'URL' %}
+                  <span class="badge bg-primary"><i class="fas fa-link"></i> URL</span>
+                  {% else %}
+                  <span class="badge bg-info"><i class="fas fa-file"></i> File</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">Target:</div>
+                <div class="info-value">{{ scan.target }}</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">Status:</div>
+                <div class="info-value">
+                  {% if scan.status == 'Completed' %}
+                  <span class="badge bg-success">Completed</span>
+                  {% else %}
+                  <span class="badge bg-warning">{{ scan.status }}</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">Result:</div>
+                <div class="info-value">
+                  {% if "Error during scan" in scan.result %}
+                  <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error</span>
+                  {% elif scan.malicious == 0 %}
+                  <span class="text-success"><i class="fas fa-check-circle"></i> Clean</span>
+                  {% else %}
+                  <span class="text-warning"><i class="fas fa-exclamation-circle"></i> {{ scan.result }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Threat Details Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="scan-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-header">
+            <h5><i class="fas fa-shield-alt"></i> Threat Analysis</h5>
+            <div class="cyber-card-glow"></div>
+          </div>
+          <div class="card-body">
+            {% if scan.malicious == 0 %}
+            <div class="text-center py-4">
+              <div class="cyber-shield-icon mb-3">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <h4 class="text-success">No Threats Detected</h4>
+              <p>This scan completed successfully with no security issues found.</p>
+            </div>
+            {% elif "Error during scan" in scan.result %}
+            <div class="text-center py-4">
+              <div class="cyber-error-icon mb-3">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <h4 class="text-danger">Scan Error</h4>
+              <p>There was an error during the scan process. Please try scanning again.</p>
+            </div>
+            {% else %}
+            <div class="threat-details">
+              <div class="threat-severity">
+                <h6>Threat Severity</h6>
+                <div class="progress cyber-progress">
+                  <div class="progress-bar bg-danger" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                  <small>Low</small>
+                  <small>Medium</small>
+                  <small>High</small>
+                  <small>Critical</small>
+                </div>
+              </div>
+              <div class="threat-type mt-4">
+                <h6>Threat Type</h6>
+                <p><span class="badge bg-danger">Malware</span> {{ scan.result }}</p>
+              </div>
+              <div class="recommended-action mt-4">
+                <h6>Recommended Action</h6>
+                <p>Immediate isolation and removal of the detected threat is recommended.</p>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed Analysis Section -->
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="scan-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-header">
+            <h5><i class="fas fa-chart-bar"></i> Detailed Analysis</h5>
+            <div class="cyber-card-glow"></div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Analysis Metrics -->
+              <div class="col-md-6 mb-4">
+                <h6 class="cyber-subheading">Scan Metrics</h6>
+                <div class="cyber-metrics-grid">
+                  <div class="metric-item">
+                    <div class="metric-icon">
+                      <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="metric-details">
+                      <div class="metric-value">2.4s</div>
+                      <div class="metric-label">Scan Duration</div>
+                    </div>
+                  </div>
+                  <div class="metric-item">
+                    <div class="metric-icon">
+                      <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="metric-details">
+                      <div class="metric-value">{{ scan.type == 'File' and '1.2MB' or '24 Elements' }}</div>
+                      <div class="metric-label">{{ scan.type == 'File' and 'File Size' or 'Elements Scanned' }}</div>
+                    </div>
+                  </div>
+                  <div class="metric-item">
+                    <div class="metric-icon">
+                      <i class="fas fa-database"></i>
+                    </div>
+                    <div class="metric-details">
+                      <div class="metric-value">v4.2.1</div>
+                      <div class="metric-label">Database Version</div>
+                    </div>
+                  </div>
+                  <div class="metric-item">
+                    <div class="metric-icon">
+                      <i class="fas fa-search"></i>
+                    </div>
+                    <div class="metric-details">
+                      <div class="metric-value">Deep</div>
+                      <div class="metric-label">Scan Level</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Scan Timeline -->
+              <div class="col-md-6 mb-4">
+                <h6 class="cyber-subheading">Scan Timeline</h6>
+                <div class="cyber-timeline">
+                  <div class="timeline-item">
+                    <div class="timeline-dot completed"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-time">00:00.00s</div>
+                      <div class="timeline-title">Scan Initiated</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot completed"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-time">00:00.52s</div>
+                      <div class="timeline-title">Target Analysis</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot completed"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-time">00:01.35s</div>
+                      <div class="timeline-title">Threat Detection</div>
+                    </div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-dot completed"></div>
+                    <div class="timeline-content">
+                      <div class="timeline-time">00:02.40s</div>
+                      <div class="timeline-title">Scan Completed</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technical Details -->
+            <div class="mt-4">
+              <h6 class="cyber-subheading">Technical Details</h6>
+              <div class="cyber-code-block">
+                <pre><code>Scan ID: {{ scan.id }}
+Target: {{ scan.target }}
+Timestamp: {{ scan.date }}
+Scanner Version: 3.5.2
+Signature Database: 20250502-1
+{% if scan.malicious == 0 %}
+Result: No threats detected
+Scanned elements: {{ scan.type == 'File' and '24 sections' or '18 resources' }}
+Scan duration: 2.4 seconds
+{% else %}
+Result: {{ scan.result }}
+Detection type: Heuristic analysis
+Threat classification: Malicious {{ scan.type == 'File' and 'executable' or 'script' }}
+Threat severity: High
+{% endif %}</code></pre>
+              </div>
+            </div>
+
+            {% if scan.type == 'File' %}
+            <!-- File Details -->
+            <div class="mt-4">
+              <h6 class="cyber-subheading">File Details</h6>
+              <div class="cyber-info-grid">
+                <div class="info-row">
+                  <div class="info-label">MD5:</div>
+                  <div class="info-value">{{ scan.md5 or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">SHA-1:</div>
+                  <div class="info-value">{{ scan.sha1 or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">SHA-256:</div>
+                  <div class="info-value">{{ scan.sha256 or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">SSDEEP:</div>
+                  <div class="info-value">{{ scan.ssdeep or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">TLSH:</div>
+                  <div class="info-value">{{ scan.tlsh or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">File Type:</div>
+                  <div class="info-value">{{ scan.file_type or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Source:</div>
+                  <div class="info-value">{{ scan.source or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Magic:</div>
+                  <div class="info-value">{{ scan.magic or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">TrID:</div>
+                  <div class="info-value">{{ scan.trid or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Magika:</div>
+                  <div class="info-value">{{ scan.magika or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">File Size:</div>
+                  <div class="info-value">{{ scan.file_size or 'N/A' }}</div>
+                </div>
+              </div>
+            </div>
+            {% elif scan.type == 'URL' %}
+            <!-- URL Details -->
+            <div class="mt-4">
+              <h6 class="cyber-subheading">URL Details</h6>
+              <div class="cyber-info-grid">
+                <div class="info-row">
+                  <div class="info-label">Final URL:</div>
+                  <div class="info-value">{{ scan.url_last_final_url or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Reputation:</div>
+                  <div class="info-value">{{ scan.url_reputation or 'N/A' }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Categories:</div>
+                  <div class="info-value">
+                    {% if scan.url_categories %}
+                      <ul>
+                        {% for key, value in scan.url_categories.items() %}
+                          <li>{{ key }}: {{ value }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Analysis Stats:</div>
+                  <div class="info-value">
+                    {% if scan.url_last_analysis_stats %}
+                      <ul>
+                        {% for key, value in scan.url_last_analysis_stats.items() %}
+                          <li>{{ key }}: {{ value }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Vendor Scan Results:</div>
+                  <div class="info-value">
+                    {% if scan.url_last_analysis_results %}
+                      <ul>
+                        {% for vendor, result in scan.url_last_analysis_results.items() %}
+                          <li>
+                            <strong>{{ vendor }}</strong>:
+                            {% if result.category == 'malicious' %}
+                              <span class="text-danger">{{ result.result or 'Malicious' }}</span>
+                            {% elif result.category == 'suspicious' %}
+                              <span class="text-warning">{{ result.result or 'Suspicious' }}</span>
+                            {% elif result.category == 'harmless' %}
+                              <span class="text-success">{{ result.result or 'Clean' }}</span>
+                            {% else %}
+                              <span>{{ result.result or 'Unknown' }}</span>
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Malicious Indicators:</div>
+                  <div class="info-value">
+                    {% set malicious_reasons = [] %}
+                    {% if scan.url_reputation and scan.url_reputation != 'harmless' %}
+                      {% set _ = malicious_reasons.append('Reputation: ' ~ scan.url_reputation) %}
+                    {% endif %}
+                    {% if scan.url_categories %}
+                      {% for key, value in scan.url_categories.items() %}
+                        {% if value != 'harmless' %}
+                          {% set _ = malicious_reasons.append(key ~ ': ' ~ value) %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    {% if malicious_reasons %}
+                      <ul>
+                        {% for reason in malicious_reasons %}
+                          <li>{{ reason }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
+                      None detected
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-center mb-5">
+      <a href="{{ url_for('download_report', scan_id=scan.id) }}" class="btn btn-cyber mx-2">
+        <span><i class="fas fa-download"></i> Download Report</span>
+        <div class="btn-cyber-glow"></div>
+      </a>
+      <a href="{{ url_for('rescan', scan_id=scan.id) }}" class="btn btn-cyber-outline mx-2">
+        <span><i class="fas fa-redo"></i> Rescan</span>
+        <div class="btn-cyber-glow"></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer-section">
+    <div class="cyber-grid-footer"></div>
+    <div class="container">
+      <div class="footer-bottom text-center">
+        <p>&copy; 2025 ViroScan. All Rights Reserved.</p>
+        <div class="footer-legal">
+          <a href="#" class="cyber-link-sm">Terms of Service</a>
+          <a href="#" class="cyber-link-sm">Privacy Policy</a>
+          <a href="#" class="cyber-link-sm">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    // Initialize AOS animations
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+
+    // Create binary rain effect
+    function createBinaryRain() {
+      const binaryRain = document.querySelector('.cyber-binary-rain');
+      const width = binaryRain.offsetWidth;
+      const height = binaryRain.offsetHeight;
+      
+      for (let i = 0; i < 50; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'binary-drop';
+        drop.style.left = `${Math.random() * width}px`;
+        drop.style.animationDuration = `${Math.random() * 2 + 1}s`;
+        drop.style.animationDelay = `${Math.random() * 2}s`;
+        
+        // Random binary content
+        drop.textContent = Math.random() > 0.5 ? '1' : '0';
+        
+        binaryRain.appendChild(drop);
+      }
+    }
+
+    // Create particles effect
+    function createParticles() {
+      const particles = document.querySelector('.cyber-particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random position
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 5 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random animation duration
+        particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+        
+        particles.appendChild(particle);
+      }
+    }
+
+    // Create grid effect
+    function createGrid() {
+      const grid = document.querySelector('.cyber-grid');
+      const gridSize = 20;
+      
+      for (let i = 0; i < gridSize; i++) {
+        const horizontalLine = document.createElement('div');
+        horizontalLine.className = 'grid-line horizontal';
+        horizontalLine.style.top = `${(i / gridSize) * 100}%`;
+        
+        const verticalLine = document.createElement('div');
+        verticalLine.className = 'grid-line vertical';
+        verticalLine.style.left = `${(i / gridSize) * 100}%`;
+        
+        grid.appendChild(horizontalLine);
+        grid.appendChild(verticalLine);
+      }
+    }
+
+    // Initialize cyber effects
+    document.addEventListener('DOMContentLoaded', function() {
+      createBinaryRain();
+      createParticles();
+      createGrid();
+    });
+  </script>
+</body>
+</html>

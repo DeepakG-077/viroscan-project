@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Full Scan History - ViroScan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+
+<body class="cyber-theme">
+  <!-- Cyber Background Elements -->
+  <div class="cyber-grid"></div>
+  <div class="cyber-particles"></div>
+  <div class="cyber-binary-rain"></div>
+
+  <!-- Header -->
+  <header class="header_section">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg custom_nav-container">
+        <a class="navbar-brand" href="/">
+          <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="ViroScan Logo" class="logo" />
+            <div class="logo-glow"></div>
+          </div>
+          <span class="cyber-text">Viro<span class="text-accent">Scan</span></span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="heading_container text-center mb-5">
+      <h2 class="cyber-heading">Full Scan <span class="text-accent">History</span></h2>
+      <div class="cyber-line"></div>
+      <p class="lead">View all your scans done on ViroScan Security.</p>
+      <a href="/#scan-section" class="btn btn-cyber mt-4">
+        <span><i class="fas fa-arrow-left mr-2"></i> Back to Start Your Scan</span>
+        <div class="btn-cyber-glow"></div>
+      </a>
+    </div>
+
+    <div class="table-responsive" data-aos="fade-up">
+      <table class="table custom-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Target</th>
+            <th>Status</th>
+            <th>Result</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in scan_history %}
+          <tr class="cyber-table-row">
+            <td><span class="badge bg-secondary">#{{ record['record'][0] }}</span></td>
+            <td>{{ record['record'][1] }}</td>
+            <td>
+              {% if record['record'][2] == 'URL' %}
+              <span class="badge bg-primary"><i class="fas fa-link"></i> URL</span>
+              {% else %}
+              <span class="badge bg-info"><i class="fas fa-file"></i> File</span>
+              {% endif %}
+            </td>
+            <td class="text-truncate" style="max-width: 200px;">{{ record['record'][3] }}</td>
+            <td>
+              {% if record['record'][4] == 'Completed' %}
+              <span class="badge bg-success">Completed</span>
+              {% else %}
+              <span class="badge bg-warning">{{ record['record'][4] }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if "Error during scan" in record['record'][5] %}
+              <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Error</span>
+              {% elif record['malicious'] > 0 %}
+              <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Malicious</span>
+              {% else %}
+              <span class="text-success"><i class="fas fa-check-circle"></i> Clean</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{ url_for('scan_report', scan_id=record['record'][0]) }}" class="btn btn-cyber-sm">
+                <span><i class="fas fa-file-alt"></i> Report</span>
+                <div class="btn-cyber-glow"></div>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer-section mt-5">
+    <div class="cyber-grid-footer"></div>
+    <div class="container">
+      <div class="footer-bottom text-center">
+        <p>&copy; 2025 ViroScan. All Rights Reserved.</p>
+        <div class="footer-legal">
+          <a href="#" class="cyber-link-sm">Terms of Service</a>
+          <a href="#" class="cyber-link-sm">Privacy Policy</a>
+          <a href="#" class="cyber-link-sm">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    // Initialize AOS animations
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+
+    // Create binary rain effect
+    function createBinaryRain() {
+      const binaryRain = document.querySelector('.cyber-binary-rain');
+      const width = binaryRain.offsetWidth;
+      const height = binaryRain.offsetHeight;
+      
+      for (let i = 0; i < 50; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'binary-drop';
+        drop.style.left = `${Math.random() * width}px`;
+        drop.style.animationDuration = `${Math.random() * 2 + 1}s`;
+        drop.style.animationDelay = `${Math.random() * 2}s`;
+        
+        // Random binary content
+        drop.textContent = Math.random() > 0.5 ? '1' : '0';
+        
+        binaryRain.appendChild(drop);
+      }
+    }
+
+    // Create particles effect
+    function createParticles() {
+      const particles = document.querySelector('.cyber-particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        // Random position
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+        
+        // Random size
+        const size = Math.random() * 5 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random animation duration
+        particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+        
+        particles.appendChild(particle);
+      }
+    }
+
+    // Create grid effect
+    function createGrid() {
+      const grid = document.querySelector('.cyber-grid');
+      const gridSize = 20;
+      
+      for (let i = 0; i < gridSize; i++) {
+        const horizontalLine = document.createElement('div');
+        horizontalLine.className = 'grid-line horizontal';
+        horizontalLine.style.top = `${(i / gridSize) * 100}%`;
+        
+        const verticalLine = document.createElement('div');
+        verticalLine.className = 'grid-line vertical';
+        verticalLine.style.left = `${(i / gridSize) * 100}%`;
+        
+        grid.appendChild(horizontalLine);
+        grid.appendChild(verticalLine);
+      }
+    }
+
+    // Initialize cyber effects
+    document.addEventListener('DOMContentLoaded', function() {
+      createBinaryRain();
+      createParticles();
+      createGrid();
+    });
+  </script>
+</body>
+</html>
